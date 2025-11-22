@@ -4,6 +4,9 @@ import {
   cancelarReservaController,
 } from "../controllers/admincontroller";
 import { verificarToken, verificarAdmin } from "../middlewares/authmiddleware";
+import { obtenerUsuariosController } from "../controllers/admincontroller";
+import { actualizarUsuarioController } from "../controllers/admincontroller";
+import { eliminarUsuarioController } from "../controllers/admincontroller";
 
 const router = Router();
 
@@ -18,6 +21,25 @@ router.put(
   verificarToken,
   verificarAdmin,
   cancelarReservaController
+);
+router.get(
+  "/usuarios",
+  verificarToken,
+  verificarAdmin,
+  obtenerUsuariosController
+);
+router.put(
+  "/edit-usuarios/:id",
+  verificarToken,
+  verificarAdmin,
+  actualizarUsuarioController
+);
+
+router.delete(
+  "/delete-usuarios/:id",
+  verificarToken,
+  verificarAdmin,
+  eliminarUsuarioController
 );
 
 export default router;

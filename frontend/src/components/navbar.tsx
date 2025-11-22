@@ -40,6 +40,15 @@ function Navbar() {
         </Link>
       )}
 
+      {user && user.rol === "admin" && (
+        <Link
+          to="/adminusuarios"
+          style={{ marginRight: "10px", color: "#fff" }}
+        >
+          Ver usuarios
+        </Link>
+      )}
+
       {user && (
         <button
           onClick={handleLogout}

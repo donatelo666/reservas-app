@@ -146,7 +146,7 @@ function Reservas() {
     <div style={{ padding: "20px" }}>
       <h2>Mis Reservas</h2>
 
-      {/* Formulario */}
+      {/* Formulario de creacion*/}
       <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
         <label>
           Servicio:

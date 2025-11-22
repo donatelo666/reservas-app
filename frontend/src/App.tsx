@@ -6,6 +6,7 @@ import Reservas from "./pages/reservas";
 import AdminPanel from "./pages/adminpanel";
 import Navbar from "./components/navbar";
 import { AuthProvider } from "./context/authcontext";
+import AdminUsuarios from "./pages/adminusuarios";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
 
           {/* Admin */}
           <Route path="/adminpanel" element={<AdminPanel />} />
+          <Route path="/adminusuarios" element={<AdminUsuarios />} />
         </Routes>
       </Router>
     </AuthProvider>
