@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/authcontext";
 import EditReservaModal from "../components/edit-modal";
 import ConfirmModal from "../components/confirm-modal";
+import { toast } from "react-toastify";
 
 interface Reserva {
   id: number;
@@ -11,7 +12,7 @@ interface Reserva {
   servicio_nombre: string;
   fecha: string;
   hora: string;
-  estado?: "pendiente" | "confirmada" | "cancelada";
+  estado: "pendiente" | "confirmada" | "cancelada";
 }
 
 interface Servicio {
@@ -86,7 +87,8 @@ function Reservas() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id || !token) {
-      alert("Debes iniciar sesión para crear una reserva");
+      toast.warning("Debes iniciar sesion para crear una reserva");
+
       return;
     }
     try {
@@ -98,7 +100,8 @@ function Reservas() {
         }
       );
 
-      alert("Reserva creada con éxito");
+      toast.success("Reserva creada con exito");
+
       setFormData({
         usuario_id: user.id,
         servicio_id: 0,
@@ -110,7 +113,7 @@ function Reservas() {
       });
       fetchReservas();
     } catch (error: any) {
-      alert(error.response?.data?.message || "Error al crear reserva");
+      toast.error("Error al crear reserva");
     }
   };
 
@@ -121,12 +124,12 @@ function Reservas() {
         { fecha, hora },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Reserva editada");
+      toast.success("Reserva editada con exito");
       setReservas((prev) =>
         prev.map((r) => (r.id === id ? { ...r, fecha, hora } : r))
       );
     } catch (error) {
-      console.error("Error al editar reserva", error);
+      toast.error("Error en edicion de reserva");
     }
   };
 
@@ -135,19 +138,19 @@ function Reservas() {
       await axios.delete(`http://localhost:4000/api/reservas/eliminar/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert("Reserva eliminada");
+      toast.success("Reserva eliminada");
       setReservas((prev) => prev.filter((r) => r.id !== id));
     } catch (error) {
-      console.error("Error al eliminar reserva", error);
+      toast.error("Error eliminando reserva");
     }
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Mis Reservas</h2>
+      <h2 className="titulos">Hacer una reserva</h2>
 
       {/* Formulario de creacion*/}
-      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
+      <form onSubmit={handleSubmit}>
         <label>
           Servicio:
           <select
@@ -194,21 +197,32 @@ function Reservas() {
       </form>
 
       {/* Listado de reservas */}
-      <h3>Reservas existentes</h3>
-      <ul>
-        {reservas.map((reserva) => (
-          <li key={reserva.id}>
-            Servicio: {reserva.servicio_nombre} | Fecha: {reserva.fecha} | Hora:{" "}
-            {reserva.hora} | Estado: {reserva.estado}{" "}
-            <button onClick={() => setReservaEditando(reserva)}>
-              ✏️ Editar
-            </button>
-            <button onClick={() => setReservaAEliminar(reserva)}>
-              🗑️ Eliminar
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="reservas-section">
+        <h3>Mis reservas</h3>
+        <ul className="reservas-list">
+          {reservas.map((reserva) => (
+            <li key={reserva.id}>
+              <span className="reserva-info">
+                Servicio: {reserva.servicio_nombre} | Fecha: {reserva.fecha} |
+                Hora: {reserva.hora} | Estado: {reserva.estado}
+                {""}
+              </span>
+              <button
+                className="edit"
+                onClick={() => setReservaEditando(reserva)}
+              >
+                ✏️ Editar
+              </button>
+              <button
+                className="delete"
+                onClick={() => setReservaAEliminar(reserva)}
+              >
+                🗑️ Eliminar
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {reservaEditando && (
         <EditReservaModal

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/authcontext";
-import "../styles/admin-usuarios.css";
 import EditUsuarioModal from "../components/edit-usuario";
 import ConfirmModal2 from "../components/eliminar-usuario-modal";
+import { toast } from "react-toastify";
 
 interface Usuario {
   id: number;
@@ -19,6 +19,20 @@ function AdminUsuarios() {
   const [usuarioAEliminar, setUsuarioAEliminar] = useState<Usuario | null>(
     null
   );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [rolFiltro, setRolFiltro] = useState(""); // vacio = todos
+
+  const usuariosFiltrados = usuarios.filter((u) => {
+    const coincideTexto =
+      u.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.rol.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.id.toString().includes(searchTerm);
+
+    const coincideRol = rolFiltro ? u.rol === rolFiltro : true;
+
+    return coincideTexto && coincideRol;
+  });
 
   useEffect(() => {
     const fetchUsuarios = async () => {
@@ -42,7 +56,7 @@ function AdminUsuarios() {
     id: number,
     nombre: string,
     email: string,
-    rol: string //  restringir aquí
+    rol: string //  restringir aquí a string
   ) => {
     try {
       await axios.put(
@@ -50,11 +64,13 @@ function AdminUsuarios() {
         { nombre, email, rol },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Usuario editado");
+      toast.success("Usuario editado con exito");
+
       setUsuarios((prev) =>
         prev.map((u) => (u.id === id ? { ...u, nombre, email, rol } : u))
       );
     } catch (error) {
+      toast.error("❌ Error al editar usuario");
       console.error("Error al editar usuario", error);
     }
   };
@@ -67,16 +83,37 @@ function AdminUsuarios() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("Usuario eliminada");
+      toast.success("Usuario eliminado correctamente");
+
       setUsuarios((prev) => prev.filter((u) => u.id !== id));
     } catch (error) {
+      toast.error("❌ Error al eliminar usuario");
       console.error("Error al eliminar reserva", error);
     }
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Tabla usuarios</h2>
+      <h2 className="titulos">Tabla usuarios</h2>
+      <h2 className="titulos">Buscador</h2>
+
+      <div className="buscador-container">
+        <input
+          className="buscador"
+          type="text"
+          placeholder="Buscar por nombre, email o id "
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          value={rolFiltro}
+          onChange={(e) => setRolFiltro(e.target.value)}
+        >
+          <option value="">Todos los roles</option>
+          <option value="admin">Admin</option>
+          <option value="cliente">Cliente</option>
+        </select>
+      </div>
 
       {user?.rol !== "admin" ? (
         <p>No tienes acceso a esta sección</p>
@@ -92,7 +129,7 @@ function AdminUsuarios() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((usuario) => (
+            {usuariosFiltrados.map((usuario) => (
               <tr key={usuario.id}>
                 <td>{usuario.id}</td>
                 <td>{usuario.nombre}</td>

@@ -5,7 +5,7 @@ function Home() {
   const { user } = useAuth();
 
   return (
-    <div style={{ padding: "40px", textAlign: "center" }}>
+    <div className="home-container">
       <h1>Bienvenido al Sistema de Reservas</h1>
       <p>
         Administra tus servicios y reservas de manera fácil y rápida con nuestra
@@ -13,23 +13,24 @@ function Home() {
       </p>
 
       {!user && (
-        <div style={{ marginTop: "20px" }}>
-          <Link to="/login" style={{ marginRight: "15px" }}>
-            Iniciar Sesión
-          </Link>
+        <div>
+          <Link to="/login">Iniciar Sesión</Link>
           <Link to="/registro">Registrarse</Link>
         </div>
       )}
 
       {user && user.rol === "cliente" && (
-        <div style={{ marginTop: "20px" }}>
+        <div>
           <Link to="/reservas">Mis Reservas</Link>
         </div>
       )}
 
       {user && user.rol === "admin" && (
-        <div style={{ marginTop: "20px" }}>
-          <Link to="/admin">Panel de Administración</Link>
+        <div>
+          <Link to="/adminpanel">Ver reservas</Link>
+          <br></br>
+          <br></br>
+          <Link to="/adminusuarios">Ver usuarios</Link>
         </div>
       )}
     </div>

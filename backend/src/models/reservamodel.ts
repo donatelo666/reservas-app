@@ -2,12 +2,12 @@ import { database } from "../config/database";
 
 // Tipado de Reserva
 export interface Reserva {
-  id?: number;
+  id: number;
   usuario_id: number;
   servicio_id: number;
   fecha: string; // formato YYYY-MM-DD
   hora: string; // formato HH:MM:SS
-  estado?: "pendiente" | "confirmada" | "cancelada";
+  estado: "pendiente" | "confirmada" | "cancelada";
 }
 
 // Crear una nueva reserva
@@ -56,7 +56,7 @@ export const obtenerReservasPorUsuario = async (usuarioId: number) => {
        r.estado
      FROM reservas r
      JOIN servicios s ON r.servicio_id = s.id
-     `,
+      WHERE r.usuario_id = ?`, //👈 aquí usas el parámetro
 
     [usuarioId]
   );

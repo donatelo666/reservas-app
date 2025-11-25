@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/authcontext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
   const { login } = useAuth();
@@ -18,7 +19,8 @@ function Login() {
       });
 
       if (!res.data.token) {
-        alert("Login fallido: token no recibido");
+        toast.error("❌ login fallido: token no recibido");
+
         return;
       }
 
@@ -36,8 +38,10 @@ function Login() {
       // Redirigir según rol
       const rol = res.data.rol.toLowerCase();
       if (rol === "admin") {
+        toast.success("Sesion admin iniciada");
         navigate("/adminpanel");
       } else if (rol === "cliente") {
+        toast.success("Sesion  iniciada");
         navigate("/reservas");
       } else {
         navigate("/reservas");

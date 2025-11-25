@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/authcontext";
-import "../styles/admin-panel.css";
+import { toast } from "react-toastify";
 
 interface Reserva {
   id: number;
@@ -55,10 +55,12 @@ function AdminPanel() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      toast.success("Reserva confirmada");
       setReservas((prev) =>
         prev.map((r) => (r.id === id ? { ...r, estado: "confirmada" } : r))
       );
     } catch (error) {
+      toast.error("❌ Error confirmando");
       console.error("Error al confirmar reserva", error);
     }
   };
@@ -70,30 +72,33 @@ function AdminPanel() {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      toast.success("Reserva cancelada");
+
       setReservas((prev) =>
         prev.map((r) => (r.id === id ? { ...r, estado: "cancelada" } : r))
       );
     } catch (error) {
+      toast.error("❌ Error cancelando");
       console.error("Error al cancelar reserva", error);
     }
   };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Panel de Administración</h2>
-      <div>
+      <h2 className="titulos">Tabla reservas</h2>
+      <h2 className="titulos">Buscador</h2>
+
+      <div className="buscador-container">
         <input
           className="buscador"
           type="text"
           placeholder="Buscar por nombre, servicio, fecha o  id ..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ marginBottom: "10px", padding: "6px", width: "450px" }}
         />
         <select
           value={estadoFiltro}
           onChange={(e) => setEstadoFiltro(e.target.value)}
-          style={{ padding: "6px" }}
         >
           <option value="">Todos los estados</option>
           <option value="pendiente">Pendiente</option>

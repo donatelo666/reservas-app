@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../styles/edit-usuario.css";
 
 interface EditUsuarioModalProps {
   usuarioId: number;

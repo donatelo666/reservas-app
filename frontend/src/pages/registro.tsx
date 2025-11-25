@@ -1,11 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Registro() {
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rol, setRol] = useState<"cliente" | "admin">("cliente");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,13 +19,14 @@ function Registro() {
         password,
         rol,
       });
-      alert("Usuario registrado con éxito");
+      toast.success("Usuario registrado con exito");
       setNombre("");
       setEmail("");
       setPassword("");
       setRol("cliente");
+      navigate("/login");
     } catch (error) {
-      alert("Error en el registro");
+      toast.error("❌ Error al registrar usuario");
       console.error(error);
     }
   };

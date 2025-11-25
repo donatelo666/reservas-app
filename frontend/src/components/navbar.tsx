@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/authcontext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -8,61 +9,37 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
+    toast.success("Sesion cerrada");
     navigate("/"); // redireccion al home
   };
 
   return (
-    <nav style={{ padding: "10px", background: "#333", color: "#fff" }}>
-      <Link to="/" style={{ marginRight: "10px", color: "#fff" }}>
-        Home
-      </Link>
+    <nav>
+      <h1>Reservas</h1>
+      <Link to="/">Home</Link>
 
       {!user && (
         <>
-          <Link to="/login" style={{ marginRight: "10px", color: "#fff" }}>
-            Login
-          </Link>
-          <Link to="/registro" style={{ marginRight: "10px", color: "#fff" }}>
-            Registro
-          </Link>
+          <Link to="/login">Login</Link>
+          <Link to="/registro">Registro</Link>
         </>
       )}
 
       {user && user.rol === "cliente" && (
-        <Link to="/reservas" style={{ marginRight: "10px", color: "#fff" }}>
-          Mis Reservas
-        </Link>
+        <Link to="/reservas">Mis Reservas</Link>
+      )}
+
+      {user && user.rol === "admin" && <Link to="/reservas">Mis Reservas</Link>}
+
+      {user && user.rol === "admin" && (
+        <Link to="/adminpanel">Ver reservas</Link>
       )}
 
       {user && user.rol === "admin" && (
-        <Link to="/adminpanel" style={{ marginRight: "10px", color: "#fff" }}>
-          Panel Admin
-        </Link>
+        <Link to="/adminusuarios">Ver usuarios</Link>
       )}
 
-      {user && user.rol === "admin" && (
-        <Link
-          to="/adminusuarios"
-          style={{ marginRight: "10px", color: "#fff" }}
-        >
-          Ver usuarios
-        </Link>
-      )}
-
-      {user && (
-        <button
-          onClick={handleLogout}
-          style={{
-            marginLeft: "10px",
-            background: "red",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Logout
-        </button>
-      )}
+      {user && <button onClick={handleLogout}>Logout</button>}
     </nav>
   );
 }

@@ -7,10 +7,22 @@ import AdminPanel from "./pages/adminpanel";
 import Navbar from "./components/navbar";
 import { AuthProvider } from "./context/authcontext";
 import AdminUsuarios from "./pages/adminusuarios";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <AuthProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <Router>
         <Navbar />
         <Routes>
