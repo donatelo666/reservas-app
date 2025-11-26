@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { crearUsuario, buscarUsuarioPorEmail } from "../models/usuariomodel";
+import { actualizarPerfil } from "../models/usuariomodel";
+import { enviarMensajeSoporte } from "../models/usuariomodel";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-// Registro
+// Registro controlador
 export const registroController = async (req: Request, res: Response) => {
   try {
     const { nombre, email, password, rol } = req.body;
@@ -20,9 +22,10 @@ export const registroController = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await crearUsuario({ nombre, email, password: hashedPassword, rol });
-    res.status(201).json({ message: "Usuario registrado con éxito" });
+    res.status(201).json({ succes: true });
   } catch (error) {
-    res.status(500).json({ error: "Error en el registro" });
+    console.error("Error registrando: ", error);
+    res.status(500).json({ succes: false });
   }
 };
 
@@ -54,12 +57,55 @@ export const loginController = async (req: Request, res: Response) => {
 
     // Devolver datos completos
     res.json({
-      message: "Login exitoso",
       token,
       ...payload,
     });
   } catch (error) {
-    console.error("Error en loginController:", error);
-    res.status(500).json({ error: "Error en el login" });
+    console.error("Error en login:", error);
+    res.status(500).json({ succes: false });
+  }
+};
+
+// Actualizar perfil
+export const actualizarPerfilController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { nombre, email, oldPassword, newPassword } = req.body;
+    const result = await actualizarPerfil(id, {
+      nombre,
+      email,
+      oldPassword,
+      newPassword,
+    });
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ succes: false });
+  }
+};
+
+export const enviarMensajeSoporteController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const usuario_id = Number(req.params.id); //  aquí tomas el id de la URL
+    const { asunto, mensaje } = req.body;
+
+    // verificacion de id coincidente con id del token
+    const authUserId = (req as any).usuario.id;
+
+    if (usuario_id !== authUserId) {
+      return res.status(403).json({ success: false, error: "No autorizado" });
+    }
+
+    await enviarMensajeSoporte({ usuario_id, asunto, mensaje });
+
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.error("Error guardando mensaje de soporte:", error);
+    res.status(500).json({ success: false });
   }
 };

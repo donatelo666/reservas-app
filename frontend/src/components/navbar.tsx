@@ -15,18 +15,23 @@ function Navbar() {
 
   return (
     <nav>
-      <h1>Reservas</h1>
+      <h1> Gestor de reservas</h1>
       <Link to="/">Home</Link>
 
       {!user && (
         <>
-          <Link to="/login">Login</Link>
+          <Link to="/login">Iniciar sesion</Link>
           <Link to="/registro">Registro</Link>
         </>
       )}
 
       {user && user.rol === "cliente" && (
         <Link to="/reservas">Mis Reservas</Link>
+      )}
+
+      {user && user.rol === "cliente" && <Link to="/perfil">Mi Perfil</Link>}
+      {user && user.rol === "cliente" && (
+        <Link to="/soporte">Soporte tecnico</Link>
       )}
 
       {user && user.rol === "admin" && <Link to="/reservas">Mis Reservas</Link>}
@@ -38,8 +43,9 @@ function Navbar() {
       {user && user.rol === "admin" && (
         <Link to="/adminusuarios">Ver usuarios</Link>
       )}
+      {user && user.rol === "admin" && <Link to="/mensajes">Ver mensajes</Link>}
 
-      {user && <button onClick={handleLogout}>Logout</button>}
+      {user && <button onClick={handleLogout}>Cerrar sesion</button>}
     </nav>
   );
 }

@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
   confirmarReservaController,
   cancelarReservaController,
+  getMensajesSoporteController,
+  actualizarEstadoMensajeController,
 } from "../controllers/admincontroller";
 import { verificarToken, verificarAdmin } from "../middlewares/authmiddleware";
 import { obtenerUsuariosController } from "../controllers/admincontroller";
@@ -40,6 +42,20 @@ router.delete(
   verificarToken,
   verificarAdmin,
   eliminarUsuarioController
+);
+
+router.get(
+  "/mensajes",
+  verificarToken,
+  verificarAdmin,
+  getMensajesSoporteController
+);
+
+router.put(
+  "/mensaje-soporte/:id",
+  verificarToken,
+  verificarAdmin,
+  actualizarEstadoMensajeController
 );
 
 export default router;

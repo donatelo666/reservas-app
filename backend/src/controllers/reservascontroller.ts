@@ -11,9 +11,10 @@ import {
 export const crearReservaController = async (req: Request, res: Response) => {
   try {
     const nuevaReserva = await crearReserva(req.body);
-    res.status(201).json({ message: "Reserva creada", data: nuevaReserva });
+    res.status(201).json({ data: nuevaReserva });
   } catch (error) {
-    res.status(500).json({ error: "Error al crear la reserva" });
+    console.error("Error creando:", error);
+    res.status(500).json({ succes: false });
   }
 };
 
@@ -26,7 +27,9 @@ export const obtenerReservasController = async (
     const reservas = await obtenerReservas();
     res.json(reservas);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener reservas" });
+    console.error("Error con reservas:", error);
+
+    res.status(500).json({ succes: false });
   }
 };
 
@@ -46,10 +49,8 @@ export const obtenerReservasPorUsuarioController = async (
 
     return res.json(reservas);
   } catch (error) {
-    console.error("Error en obtenerReservasPorUsuarioController:", error);
-    return res
-      .status(500)
-      .json({ error: "Error al obtener reservas del usuario" });
+    console.error("Error renderizando:", error);
+    return res.status(500).json({ succes: false });
   }
 };
 
@@ -61,9 +62,10 @@ export const actualizarReservaController = async (
   try {
     const id = parseInt(req.params.id);
     const result = await actualizarReserva(id, req.body);
-    res.json({ message: "Reserva actualizada", data: result });
+    res.json({ data: result });
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar la reserva" });
+    console.error("Error actualizando:", error);
+    res.status(500).json({ succes: false });
   }
 };
 
@@ -75,8 +77,9 @@ export const eliminarReservaController = async (
   try {
     const id = parseInt(req.params.id);
     const result = await eliminarReserva(id);
-    res.json({ message: "Reserva eliminada", data: result });
+    res.json({ data: result });
   } catch (error) {
-    res.status(500).json({ error: "Error al eliminar la reserva" });
+    console.error("Error eliminando:", error);
+    res.status(500).json({ succes: false });
   }
 };

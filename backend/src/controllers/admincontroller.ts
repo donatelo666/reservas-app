@@ -5,6 +5,8 @@ import {
 } from "../models/adminmodel";
 import { obtenerUsuarios } from "../models/adminmodel";
 import { eliminarUsuario } from "../models/adminmodel";
+import { obtenerMensajesSoporte } from "../models/adminmodel";
+import { actualizarEstadoMensaje } from "../models/adminmodel";
 
 export const confirmarReservaController = async (
   req: Request,
@@ -14,10 +16,10 @@ export const confirmarReservaController = async (
     const id = Number(req.params.id);
     const result = await actualizarEstadoReserva(id, "confirmada");
 
-    res.json({ message: "Reserva confirmada" });
+    res.json({ success: true });
   } catch (error) {
     console.error("Error al confirmar reserva:", error);
-    res.status(500).json({ error: "Error al confirmar reserva" });
+    res.status(500).json({ success: false, code: "error-confirmando" });
   }
 };
 
@@ -29,10 +31,10 @@ export const cancelarReservaController = async (
     const id = Number(req.params.id);
     const result = await actualizarEstadoReserva(id, "cancelada");
 
-    res.json({ message: "Reserva cancelada" });
+    res.json({ success: true });
   } catch (error) {
     console.error("Error al cancelar reserva:", error);
-    res.status(500).json({ error: "Error al cancelar reserva" });
+    res.status(500).json({ success: false });
   }
 };
 
@@ -45,7 +47,9 @@ export const obtenerUsuariosController = async (
     const usuarios = await obtenerUsuarios();
     res.json(usuarios);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener reservas" });
+    console.error("Error con usuarios:", error);
+
+    res.status(500).json({ success: false });
   }
 };
 
@@ -57,9 +61,10 @@ export const actualizarUsuarioController = async (
   try {
     const id = parseInt(req.params.id);
     const result = await actualizarUsuario(id, req.body);
-    res.json({ message: "Reserva actualizada", data: result });
+    res.json({ data: result });
   } catch (error) {
-    res.status(500).json({ error: "Error al actualizar la reserva" });
+    console.error("Error actualizando:", error);
+    res.status(500).json({ success: false });
   }
 };
 
@@ -71,8 +76,39 @@ export const eliminarUsuarioController = async (
   try {
     const id = parseInt(req.params.id);
     const result = await eliminarUsuario(id);
-    res.json({ message: "Usuario eliminado", data: result });
+    res.json({ data: result });
   } catch (error) {
-    res.status(500).json({ error: "Error al eliminar la reserva" });
+    console.error("Error eliminando:", error);
+    res.status(500).json({ succes: false });
+  }
+};
+//renderizar mensajes a soporte
+export const getMensajesSoporteController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const mensajes = await obtenerMensajesSoporte();
+    res.json(mensajes);
+  } catch (error) {
+    console.error("Error obteniendo mensajes:", error);
+    res.status(500).json({ success: false });
+  }
+};
+
+//actualizar estado de mensajes
+export const actualizarEstadoMensajeController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const { estado } = req.body;
+
+    const result = await actualizarEstadoMensaje(Number(id), estado);
+    res.json(result);
+  } catch (error) {
+    console.error("Error actualizando estado:", error);
+    res.status(500).json({ success: false });
   }
 };

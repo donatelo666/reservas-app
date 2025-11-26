@@ -1,4 +1,6 @@
 import { database } from "../config/database";
+import { RowDataPacket } from "mysql2";
+import { ResultSetHeader } from "mysql2";
 
 // Tipado de Reserva
 export interface Reserva {
@@ -44,10 +46,42 @@ export const actualizarUsuario = async (
   return result;
 };
 
-// Eliminar una reserva
+// Eliminar un usuario
 export const eliminarUsuario = async (id: number) => {
   const [result] = await database.query("DELETE FROM usuarios WHERE id = ?", [
     id,
   ]);
   return result;
+};
+
+//ver mensajes a soporte
+export const obtenerMensajesSoporte = async () => {
+  const [rows] = await database.query<RowDataPacket[]>(
+    `SELECT 
+       m.id,
+       m.usuario_id,
+       m.asunto,
+       m.mensaje,
+       m.estado,
+       DATE_FORMAT(m.created_at, '%d/%m/%Y') AS created_at,
+       u.nombre AS usuario_nombre
+       
+       
+     FROM mensajes_soporte m
+     JOIN usuarios u ON m.usuario_id = u.id
+     
+     ORDER BY m.created_at DESC`
+
+    //"SELECT * FROM mensajes_soporte ORDER BY created_at DESC"
+  );
+  return rows;
+};
+
+//actualizar estado de mensajes
+export const actualizarEstadoMensaje = async (id: number, estado: string) => {
+  const [result] = await database.query<ResultSetHeader>(
+    "UPDATE mensajes_soporte SET estado = ? WHERE id = ?",
+    [estado, id]
+  );
+  return { success: result.affectedRows > 0 };
 };
