@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../context/authcontext";
 import { toast } from "react-toastify";
+import ResponderSoporteModal from "../components/responder-soporte";
 
 interface Mensaje {
   id: number;
@@ -11,11 +12,15 @@ interface Mensaje {
   mensaje: string;
   created_at: string;
   estado: "pendiente" | "respondido";
+  respuesta_admin: string;
 }
 
 function Mensajes() {
   const { token, user } = useAuth();
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
+  const [respuestaEnviando, setRespuestaEnviando] = useState<Mensaje | null>(
+    null
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [estadoFiltro, setEstadoFiltro] = useState(""); // vacio = todos
 
@@ -52,38 +57,23 @@ function Mensajes() {
     fetchMensajes();
   }, [token, user]);
 
-  const responderMensaje = async (id: number) => {
+  const responderSoporte = async (id: number, respuesta: string) => {
     try {
       await axios.put(
-        `http://localhost:4000/api/admin/mensaje-soporte/${id}`,
-        { estado: "respondido" },
+        `http://localhost:4000/api/admin/mensaje-respuesta/${id}`,
+        { respuesta, estado: "respondido" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success("Mensaje respondido");
+      toast.success("Respuesta enviada con exito");
       setMensajes((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, estado: "respondido" } : m))
+        prev.map((m) =>
+          m.id === id
+            ? { ...m, respuesta_admin: respuesta, estado: "respondido" }
+            : m
+        )
       );
     } catch (error) {
-      toast.error("❌ Error respondiendo");
-      console.error("Error respondiendo", error);
-    }
-  };
-
-  const cancelarRespuesta = async (id: number) => {
-    try {
-      await axios.put(
-        `http://localhost:4000/api/admin/mensaje-soporte/${id}`,
-        { estado: "pendiente" },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success("Respuesta cancelada");
-
-      setMensajes((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, estado: "pendiente" } : m))
-      );
-    } catch (error) {
-      toast.error("❌ Error cancelando");
-      console.error("Error al cancelar respuesta", error);
+      toast.error("Error en respuesta");
     }
   };
 
@@ -122,6 +112,7 @@ function Mensajes() {
               <th>Mensaje</th>
               <th>Estado</th>
               <th>Creado en</th>
+              <th>Respuesta</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -134,18 +125,28 @@ function Mensajes() {
                 <td>{mensaje.mensaje}</td>
                 <td>{mensaje.estado}</td>
                 <td>{mensaje.created_at}</td>
+                <td>{mensaje.respuesta_admin}</td>
                 <td>
-                  <button onClick={() => responderMensaje(mensaje.id)}>
+                  <button
+                    className="edit"
+                    onClick={() => setRespuestaEnviando(mensaje)}
+                  >
                     Responder
-                  </button>
-                  <button onClick={() => cancelarRespuesta(mensaje.id)}>
-                    Cancelar respuesta
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+
+      {respuestaEnviando && (
+        <ResponderSoporteModal
+          mensajeId={respuestaEnviando.id}
+          respuestaActual={respuestaEnviando.respuesta_admin}
+          onClose={() => setRespuestaEnviando(null)}
+          onSave={responderSoporte}
+        />
       )}
     </div>
   );

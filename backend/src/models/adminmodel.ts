@@ -16,7 +16,7 @@ export interface Usuario {
   email: string;
   rol: "cliente" | "admin";
 }
-
+//actualizar estado reserva
 export const actualizarEstadoReserva = async (
   reservaId: number,
   estado: "pendiente" | "confirmada" | "cancelada"
@@ -64,6 +64,7 @@ export const obtenerMensajesSoporte = async () => {
        m.mensaje,
        m.estado,
        DATE_FORMAT(m.created_at, '%d/%m/%Y') AS created_at,
+       m.respuesta_admin,
        u.nombre AS usuario_nombre
        
        
@@ -71,17 +72,19 @@ export const obtenerMensajesSoporte = async () => {
      JOIN usuarios u ON m.usuario_id = u.id
      
      ORDER BY m.created_at DESC`
-
-    //"SELECT * FROM mensajes_soporte ORDER BY created_at DESC"
   );
   return rows;
 };
 
-//actualizar estado de mensajes
-export const actualizarEstadoMensaje = async (id: number, estado: string) => {
-  const [result] = await database.query<ResultSetHeader>(
-    "UPDATE mensajes_soporte SET estado = ? WHERE id = ?",
-    [estado, id]
+//responder mensaje modelo
+export const responderMensaje = async (
+  id: number,
+
+  respuesta: string
+) => {
+  const [result] = await database.query(
+    "UPDATE mensajes_soporte SET  respuesta_admin = ?, estado = ? WHERE id = ?",
+    [respuesta, "respondido", id]
   );
-  return { success: result.affectedRows > 0 };
+  return { success: true };
 };

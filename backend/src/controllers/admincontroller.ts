@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import {
   actualizarEstadoReserva,
   actualizarUsuario,
+  responderMensaje,
 } from "../models/adminmodel";
 import { obtenerUsuarios } from "../models/adminmodel";
 import { eliminarUsuario } from "../models/adminmodel";
 import { obtenerMensajesSoporte } from "../models/adminmodel";
-import { actualizarEstadoMensaje } from "../models/adminmodel";
 
 export const confirmarReservaController = async (
   req: Request,
@@ -96,19 +96,20 @@ export const getMensajesSoporteController = async (
   }
 };
 
-//actualizar estado de mensajes
-export const actualizarEstadoMensajeController = async (
+// responder mensaje de soporte
+export const responderMensajeController = async (
   req: Request,
   res: Response
 ) => {
   try {
-    const { id } = req.params;
-    const { estado } = req.body;
+    const id = parseInt(req.params.id);
+    const { respuesta } = req.body;
 
-    const result = await actualizarEstadoMensaje(Number(id), estado);
-    res.json(result);
+    const result = await responderMensaje(id, respuesta);
+
+    res.json({ data: result });
   } catch (error) {
-    console.error("Error actualizando estado:", error);
+    console.error("Error actualizando:", error);
     res.status(500).json({ success: false });
   }
 };

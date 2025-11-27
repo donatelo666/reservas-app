@@ -1,0 +1,57 @@
+.mensaje-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mensaje-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.mensaje-card p {
+  margin: 0.4rem 0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.mensaje-card strong {
+  color: #444;
+}
+
+.estado-pendiente {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: #ffeb3b;
+  color: #444;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.estado-respondido {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: #4caf50;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.respuesta-admin {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: #f5f5f5;
+  border-left: 4px solid #4caf50;
+  border-radius: 6px;
+  color: #333;
+}
+
+.respuesta-admin p {
+  margin: 0.3rem 0;
+}

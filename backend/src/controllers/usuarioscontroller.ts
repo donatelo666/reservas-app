@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { crearUsuario, buscarUsuarioPorEmail } from "../models/usuariomodel";
 import { actualizarPerfil } from "../models/usuariomodel";
 import { enviarMensajeSoporte } from "../models/usuariomodel";
+import { obtenerMensajesSoporte } from "../models/usuariomodel";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -106,6 +107,26 @@ export const enviarMensajeSoporteController = async (
     res.status(201).json({ success: true });
   } catch (error) {
     console.error("Error guardando mensaje de soporte:", error);
+    res.status(500).json({ success: false });
+  }
+};
+
+//renderizar mensajes a soporte
+export const obtenermensajesController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const usuarioId = Number(req.params.id); // 👈 usar el mismo nombre que en la ruta
+
+    if (isNaN(usuarioId)) {
+      return res.status(400).json({ error: "usuarioId inválido" });
+    }
+
+    const mensajes = await obtenerMensajesSoporte(usuarioId);
+    return res.json(mensajes);
+  } catch (error) {
+    console.error("Error obteniendo mensajes:", error);
     res.status(500).json({ success: false });
   }
 };

@@ -3,7 +3,7 @@ import {
   confirmarReservaController,
   cancelarReservaController,
   getMensajesSoporteController,
-  actualizarEstadoMensajeController,
+  responderMensajeController,
 } from "../controllers/admincontroller";
 import { verificarToken, verificarAdmin } from "../middlewares/authmiddleware";
 import { obtenerUsuariosController } from "../controllers/admincontroller";
@@ -52,10 +52,10 @@ router.get(
 );
 
 router.put(
-  "/mensaje-soporte/:id",
+  "/mensaje-respuesta/:id",
   verificarToken,
   verificarAdmin,
-  actualizarEstadoMensajeController
+  responderMensajeController
 );
 
 export default router;

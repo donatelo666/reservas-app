@@ -89,3 +89,18 @@ export const enviarMensajeSoporte = async (mensaje: Mensaje) => {
 
   return { success: result.affectedRows > 0 };
 };
+
+export const obtenerMensajesSoporte = async (Id: number) => {
+  const [rows] = await database.query<RowDataPacket[]>(
+    `SELECT 
+       m.asunto,
+       m.mensaje,
+       m.estado,
+       m.respuesta_admin
+     FROM mensajes_soporte m
+     WHERE m.usuario_id = ?
+     ORDER BY m.created_at DESC`,
+    [Id]
+  );
+  return rows;
+};
