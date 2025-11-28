@@ -86,7 +86,7 @@ function Mensajes() {
         <input
           className="buscador"
           type="text"
-          placeholder="Buscar por  ..."
+          placeholder="Buscar por nombre , asunto , mensaje o id  ..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

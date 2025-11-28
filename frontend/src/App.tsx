@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SoporteForm from "./pages/soporte";
 import Mensajes from "./pages/mensajes-soporte";
+import Servicios from "./pages/admin-servicios";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/adminpanel" element={<AdminPanel />} />
           <Route path="/adminusuarios" element={<AdminUsuarios />} />
           <Route path="/mensajes" element={<Mensajes />} />
+          <Route path="/servicios" element={<Servicios />} />
         </Routes>
       </Router>
     </AuthProvider>

@@ -2,12 +2,17 @@ import { Request, Response } from "express";
 import {
   actualizarEstadoReserva,
   actualizarUsuario,
+  obtenerServicios,
   responderMensaje,
 } from "../models/adminmodel";
 import { obtenerUsuarios } from "../models/adminmodel";
 import { eliminarUsuario } from "../models/adminmodel";
 import { obtenerMensajesSoporte } from "../models/adminmodel";
+import { crearServicio } from "../models/adminmodel";
+import { actualizarServicio } from "../models/adminmodel";
+import { eliminarServicio } from "../models/adminmodel";
 
+//confirmar reserva
 export const confirmarReservaController = async (
   req: Request,
   res: Response
@@ -23,6 +28,7 @@ export const confirmarReservaController = async (
   }
 };
 
+//cancelar reserva
 export const cancelarReservaController = async (
   req: Request,
   res: Response
@@ -111,5 +117,61 @@ export const responderMensajeController = async (
   } catch (error) {
     console.error("Error actualizando:", error);
     res.status(500).json({ success: false });
+  }
+};
+
+// Crear servicio
+export const crearServicioController = async (req: Request, res: Response) => {
+  try {
+    const nuevoServicio = await crearServicio(req.body);
+    res.status(201).json({ data: nuevoServicio });
+  } catch (error) {
+    console.error("Error creando:", error);
+    res.status(500).json({ succes: false });
+  }
+};
+
+// Obtener todos los servicios
+export const obtenerServiciosController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const servicios = await obtenerServicios();
+    res.json(servicios);
+  } catch (error) {
+    console.error("Error con servicios:", error);
+
+    res.status(500).json({ succes: false });
+  }
+};
+
+// Actualizar servicio
+export const actualizarServicioController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    const result = await actualizarServicio(id, req.body);
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error actualizando:", error);
+    res.status(500).json({ succes: false });
+  }
+};
+
+// Eliminar un servicio por id
+export const eliminarServicioController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const id = parseInt(req.params.id);
+    const result = await eliminarServicio(id);
+    res.json({ data: result });
+  } catch (error) {
+    console.error("Error eliminando:", error);
+    res.status(500).json({ succes: false });
   }
 };

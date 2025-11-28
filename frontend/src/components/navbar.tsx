@@ -44,6 +44,9 @@ function Navbar() {
         <Link to="/adminusuarios">Ver usuarios</Link>
       )}
       {user && user.rol === "admin" && <Link to="/mensajes">Ver mensajes</Link>}
+      {user && user.rol === "admin" && (
+        <Link to="/servicios">Ver servicios</Link>
+      )}
 
       {user && <button onClick={handleLogout}>Cerrar sesion</button>}
     </nav>

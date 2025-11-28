@@ -10,6 +10,15 @@ export interface Reserva {
   estado?: "pendiente" | "confirmada" | "cancelada";
 }
 
+// Tipado de servicio
+export interface Servicio {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  duracion: number;
+  precio: number;
+}
+//usuario
 export interface Usuario {
   id: number;
   nombre: string;
@@ -87,4 +96,38 @@ export const responderMensaje = async (
     [respuesta, "respondido", id]
   );
   return { success: true };
+};
+
+// Crear un nuevo servicio
+export const crearServicio = async (servicio: Servicio) => {
+  const [result] = await database.query(
+    "INSERT INTO servicios (nombre, descripcion, duracion, precio) VALUES (?, ?, ?, ?)",
+    [servicio.nombre, servicio.descripcion, servicio.duracion, servicio.precio]
+  );
+  return result;
+};
+
+// Obtener todos los servicios
+export const obtenerServicios = async () => {
+  const [rows] = await database.query("SELECT * FROM servicios");
+  return rows;
+};
+
+// Actualizar un servicio
+export const actualizarServicio = async (
+  id: number,
+  datos: Partial<Servicio>
+) => {
+  const [result] = await database.query(
+    "UPDATE servicios SET nombre = ?, descripcion = ?, duracion = ?, precio = ? WHERE id = ?",
+    [datos.nombre, datos.descripcion, datos.duracion, datos.precio, id]
+  );
+  return result;
+};
+// Eliminar un servicio
+export const eliminarServicio = async (id: number) => {
+  const [result] = await database.query("DELETE FROM servicios WHERE id = ?", [
+    id,
+  ]);
+  return result;
 };
